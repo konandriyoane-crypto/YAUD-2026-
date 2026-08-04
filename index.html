@@ -19,9 +19,9 @@
 <section class="hero" role="banner" aria-label="Page d'accueil - Yoane et Marie-Aude">
   <div class="hero-content">
     <div class="hero-carousel">
-      <img src="Couple1.jpg" alt="Photo du couple - Yoane et Marie-Aude 1" class="carousel-img active" loading="lazy">
-      <img src="Couple2.jpg" alt="Photo du couple - Yoane et Marie-Aude 2" class="carousel-img" loading="lazy">
-      <img src="Couple3.jpg" alt="Photo du couple - Yoane et Marie-Aude 3" class="carousel-img" loading="lazy">
+      <img src="https://raw.githubusercontent.com/konandriyoane-crypto/YAUD-2026-/main/Couple1.jpg" alt="Photo du couple - Yoane et Marie-Aude 1" class="carousel-img active" loading="lazy">
+      <img src="https://raw.githubusercontent.com/konandriyoane-crypto/YAUD-2026-/main/Couple2.jpg" alt="Photo du couple - Yoane et Marie-Aude 2" class="carousel-img" loading="lazy">
+      <img src="https://raw.githubusercontent.com/konandriyoane-crypto/YAUD-2026-/main/Couple3.jpg" alt="Photo du couple - Yoane et Marie-Aude 3" class="carousel-img" loading="lazy">
       <div class="carousel-dots">
         <button class="dot active" aria-label="Photo 1" onclick="goToSlide(0)"></button>
         <button class="dot" aria-label="Photo 2" onclick="goToSlide(1)"></button>
@@ -44,7 +44,7 @@
 </section>
 
 <!-- Main App Navigation -->
-<nav class="app-nav hidden" id="universe" aria-label="Navigation principale" role="navigation">
+<nav class="app-nav hidden" id="appNav" aria-label="Navigation principale" role="navigation">
   <button class="nav-item" onclick="showSection('find-place')" aria-label="Trouver ma place">
     <span class="icon">🪑</span>
     <span>Ma place</span>
@@ -60,7 +60,7 @@
 </nav>
 
 <!-- Sections -->
-<main class="app-container hidden" id="universe">
+<main class="app-container hidden" id="appContainer">
   <!-- Find Place Section -->
   <section id="find-place" class="content-section" aria-labelledby="find-place-heading">
     <div class="section-header">
@@ -75,6 +75,7 @@
         placeholder="Entrez votre nom..." 
         aria-label="Rechercher votre nom dans la liste des invités"
         autocomplete="off"
+        oninput="searchTable(this.value)"
       >
       <div id="result" class="result-box" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
