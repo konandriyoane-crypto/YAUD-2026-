@@ -1,22 +1,20 @@
-// État de l'application
+// État app
 let currentScreen = 'homeScreen';
 let selectedGuest = null;
-let occupiedSeats = {};
 let carouselIndex = 0;
 
-// Initialisation
 window.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
 function initializeApp() {
-    // Carousel photos accueil
+    // Carousel auto
     setInterval(() => {
         rotateCarousel();
     }, 4000);
     
-    // Récupérer les places occupées depuis localStorage
-    loadOccupiedSeats();
+    // Empêcher zoom iPhone
+    document.addEventListener('gesturestart', e => e.preventDefault());
 }
 
 // Navigation
@@ -27,22 +25,23 @@ function enterApp() {
 }
 
 function showScreen(screenId) {
-    // Masquer tous les écrans
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.add('hidden');
     });
     
-    // Afficher l'écran demandé
     document.getElementById(screenId).classList.remove('hidden');
     currentScreen = screenId;
     
-    // Réinitialiser certains contenus
+    // Reset search
     if (screenId === 'findPlaceScreen') {
         document.getElementById('guestSearch').value = '';
         document.getElementById('resultCard').classList.add('hidden');
         document.getElementById('helpMessage').classList.remove('hidden');
         document.getElementById('autocompleteList').classList.add('hidden');
     }
+    
+    // Scroll to top
+    document.getElementById(screenId).scrollTop = 0;
 }
 
 function goBack() {
@@ -51,9 +50,10 @@ function goBack() {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.add('hidden');
     });
+    document.getElementById('homeScreen').scrollTop = 0;
 }
 
-// Recherche d'invité
+// Recherche
 function searchGuest(query) {
     const autocompleteList = document.getElementById('autocompleteList');
     
@@ -87,99 +87,45 @@ function selectGuest(guest) {
     document.getElementById('autocompleteList').classList.add('hidden');
 }
 
-// Affichage de la carte invité
+// Affichage carte
 function displayGuestCard(guest) {
     document.getElementById('helpMessage').classList.add('hidden');
     document.getElementById('resultCard').classList.remove('hidden');
     
-    // Greeting
     const firstName = guest.firstName.split(' ')[0];
     document.getElementById('resultGreeting').textContent = `Bonjour ${firstName},`;
-    
-    // Table et place
-    document.getElementById('resultTable').textContent = guest.table;
-    document.getElementById('resultSeat').textContent = guest.seat;
-    
-    // Compagnons
-    const companionsList = document.getElementById('companionsList');
-    companionsList.innerHTML = '';
-    guest.companions.forEach(companion => {
-        const li = document.createElement('li');
-        li.textContent = companion;
-        companionsList.appendChild(li);
-    });
-    
-    // Visualisation table
-    displayTableVisualization(guest.table, guest.seat);
+    document.getElementById('resultTable').textContent = `${guest.table}`;
 }
 
-// Visualisation de la table
-function displayTableVisualization(tableNumber, selectedSeat) {
-    const tableViz = document.getElementById('tableVisualization');
-    tableViz.innerHTML = '';
-    
-    const tableGuests = getTableGuests(tableNumber);
-    
-    for (let i = 1; i <= 8; i++) {
-        const seatDiv = document.createElement('div');
-        seatDiv.className = 'seat';
-        
-        const guestAtSeat = tableGuests.find(g => g.seat === i);
-        
-        if (i === selectedSeat) {
-            seatDiv.classList.add('selected');
-            seatDiv.textContent = '✓';
-        } else if (guestAtSeat) {
-            seatDiv.classList.add('occupied');
-            const firstName = guestAtSeat.firstName.split(' ')[0];
-            seatDiv.textContent = firstName.substring(0, 3);
-        } else {
-            seatDiv.classList.add('available');
-            seatDiv.textContent = i;
-        }
-        
-        tableViz.appendChild(seatDiv);
-    }
-}
-
-// Carousel accueil
+// Carousel
 function rotateCarousel() {
     const photos = document.querySelectorAll('.couple-photo');
-    
     if (photos.length === 0) return;
     
-    // Masquer current
     photos[carouselIndex].classList.add('hidden');
-    
-    // Afficher next
     carouselIndex = (carouselIndex + 1) % photos.length;
     photos[carouselIndex].classList.remove('hidden');
-}
-
-// Gestion des places occupées (localStorage)
-function loadOccupiedSeats() {
-    const saved = localStorage.getItem('occupiedSeats');
-    occupiedSeats = saved ? JSON.parse(saved) : {};
-}
-
-function saveOccupiedSeats() {
-    localStorage.setItem('occupiedSeats', JSON.stringify(occupiedSeats));
-}
-
-// Optimisation pour connexion mobile faible
-if ('serviceWorker' in navigator && 'caches' in window) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {
-            // Service Worker optionnel
-        });
+    
+    // Dots
+    document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselIndex);
     });
 }
 
-// Détection de la connexion
-window.addEventListener('online', () => {
-    console.log('Connexion rétablie');
-});
+function goToSlide(index) {
+    const photos = document.querySelectorAll('.couple-photo');
+    photos[carouselIndex].classList.add('hidden');
+    carouselIndex = index;
+    photos[carouselIndex].classList.remove('hidden');
+    
+    document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselIndex);
+    });
+}
 
-window.addEventListener('offline', () => {
-    console.log('Mode hors ligne');
-});
+// Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+}

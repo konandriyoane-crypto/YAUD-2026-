@@ -2,8 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Site compagnon de mariage - Yoane & Marie-Aude">
+    <meta name="theme-color" content="#FF8C42">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Yoane & Marie-Aude - 08 Août 2026</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,11 +19,16 @@
         <div class="home-content">
             <div class="home-hero">
                 <div class="hero-images carousel">
-                    <img src="https://via.placeholder.com/600x800/FFB6C1/FFFFFF?text=Yoane+%26+Marie-Aude+1" alt="Photo couple 1" class="couple-photo">
-                    <img src="https://via.placeholder.com/600x800/FFDAB9/FFFFFF?text=Yoane+%26+Marie-Aude+2" alt="Photo couple 2" class="couple-photo hidden">
-                    <img src="https://via.placeholder.com/600x800/FFE4B5/FFFFFF?text=Yoane+%26+Marie-Aude+3" alt="Photo couple 3" class="couple-photo hidden">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=800&fit=crop" alt="Photo du couple 1" class="couple-photo" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1606216174052-7ec68da12f7d?w=600&h=800&fit=crop" alt="Photo du couple 2" class="couple-photo hidden" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&h=800&fit=crop" alt="Photo du couple 3" class="couple-photo hidden" loading="lazy">
                 </div>
                 <div class="hero-overlay"></div>
+                <div class="carousel-dots">
+                    <span class="dot active" onclick="goToSlide(0)"></span>
+                    <span class="dot" onclick="goToSlide(1)"></span>
+                    <span class="dot" onclick="goToSlide(2)"></span>
+                </div>
             </div>
 
             <div class="home-info">
@@ -51,7 +59,7 @@
         </button>
         <button class="nav-btn" onclick="showScreen('infoScreen')">
             <span class="nav-icon">💝</span>
-            <span class="nav-label">Infos utiles</span>
+            <span class="nav-label">Infos</span>
         </button>
     </nav>
 
@@ -69,7 +77,7 @@
                         type="text" 
                         id="guestSearch" 
                         class="search-input" 
-                        placeholder="Votre prénom ou nom..." 
+                        placeholder="Prénom ou nom..." 
                         autocomplete="off"
                         oninput="searchGuest(this.value)"
                     >
@@ -88,26 +96,12 @@
                             <span class="info-label">🌿 Table</span>
                             <span id="resultTable" class="info-value"></span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Place</span>
-                            <span id="resultSeat" class="info-value"></span>
-                        </div>
-                    </div>
-
-                    <div class="companions-section">
-                        <p class="companions-title">Vous serez installé(e) aux côtés de :</p>
-                        <ul id="companionsList" class="companions-list"></ul>
-                    </div>
-
-                    <div class="table-visualization">
-                        <p class="table-title">Visualisez votre table :</p>
-                        <div id="tableVisualization" class="table-grid"></div>
                     </div>
                 </div>
             </div>
 
             <div id="helpMessage" class="help-message">
-                <p>Entrez votre prénom ou votre nom pour trouver votre place.</p>
+                <p>Entrez votre prénom ou votre nom pour trouver votre table.</p>
             </div>
         </div>
     </div>
@@ -116,13 +110,13 @@
     <div id="flavorsScreen" class="screen hidden">
         <div class="screen-header">
             <button class="btn-back" onclick="goBack()">← Retour</button>
-            <h2>Saveurs de notre réception</h2>
+            <h2>Saveurs</h2>
         </div>
 
         <div class="screen-content">
             <div class="flavors-intro">
-                <h3>🌸 Quelques saveurs de notre réception 🌸</h3>
-                <p>Nous avons imaginé une réception aux couleurs de nos traditions, avec une sélection de mets ivoiriens et de saveurs appréciées de tous.</p>
+                <h3>🌸 Quelques saveurs 🌸</h3>
+                <p>Réception aux couleurs de nos traditions, avec une sélection de mets ivoiriens.</p>
             </div>
 
             <div class="menu-section">
@@ -133,15 +127,15 @@
             </div>
 
             <div class="menu-section">
-                <h4>🍽️ Quelques plats traditionnels à découvrir</h4>
+                <h4>🍽️ Plats traditionnels</h4>
                 <ul class="menu-list">
                     <li>Tchep au poisson et au bœuf</li>
-                    <li>Placali accompagné de sauce kopè</li>
-                    <li>Foutou banane accompagné de sauce graine</li>
-                    <li>Kplé accompagné de foutou manioc</li>
-                    <li>Foutou igname accompagné de sauce gouagouassou</li>
-                    <li>Poisson frit et poulet frit accompagnés d'alloco et de frites</li>
-                    <li>Igname bouillie accompagnée de sauce tomate</li>
+                    <li>Placali + sauce kopè</li>
+                    <li>Foutou banane + sauce graine</li>
+                    <li>Kplé + foutou manioc</li>
+                    <li>Foutou igname + sauce gouagouassou</li>
+                    <li>Poisson frit & poulet frit + alloco & frites</li>
+                    <li>Igname bouillie + sauce tomate</li>
                 </ul>
             </div>
 
@@ -158,8 +152,7 @@
                     <li>Eau minérale</li>
                     <li>Jus naturels</li>
                     <li>Boissons gazeuses</li>
-                    <li>Bières</li>
-                    <li>Vins</li>
+                    <li>Bières & Vins</li>
                 </ul>
             </div>
         </div>
@@ -169,54 +162,28 @@
     <div id="infoScreen" class="screen hidden">
         <div class="screen-header">
             <button class="btn-back" onclick="goBack()">← Retour</button>
-            <h2>Informations utiles</h2>
+            <h2>Informations</h2>
         </div>
 
         <div class="screen-content">
             <div class="info-card gifts-card">
                 <h3>💝 Les cadeaux</h3>
-                <p>Votre présence est le plus beau témoignage d'affection que nous puissions recevoir.</p>
-                <p>Pour celles et ceux qui souhaiteraient néanmoins nous offrir un présent, nous privilégions les cadeaux en espèces, afin de pouvoir les emporter plus facilement avec nous à notre retour à Dakar.</p>
+                <p>Votre présence est le plus beau témoignage d'affection.</p>
+                <p>Pour ceux qui souhaiteraient nous offrir, nous privilégions les cadeaux en espèces pour les emporter facilement à Dakar.</p>
                 <p>Un dispositif discret sera prévu lors de la réception.</p>
-                <p><strong>Merci du fond du cœur pour votre délicatesse.</strong></p>
+                <p><strong>Merci du fond du cœur!</strong></p>
             </div>
 
             <div class="info-card itinerary-card">
-                <h3>🗺️ Itinéraire recommandé</h3>
-                <p class="itinerary-intro">Pour vous rendre à Menara Garden à Yopougon de manière optimale :</p>
+                <h3>🗺️ Itinéraire</h3>
+                <p class="itinerary-intro">Menara Garden à Yopougon</p>
                 
-                <div class="itinerary-routes">
-                    <div class="route-option">
-                        <h4>📍 Via Boulevard de la Paix (Route recommandée)</h4>
-                        <ul>
-                            <li>Depuis Cocody : Empruntez la Route de l'Aéroport vers Yopougon</li>
-                            <li>Continuez sur Boulevard de la Paix</li>
-                            <li>Suivez les panneaux pour Menara Garden</li>
-                            <li>⏱️ Durée estimée : 20-30 minutes</li>
-                        </ul>
-                    </div>
-
-                    <div class="route-option">
-                        <h4>📍 Via Riviera Golf (Alternative)</h4>
-                        <ul>
-                            <li>Passez par Riviera Golf (Cocody)</li>
-                            <li>Dirigez-vous vers le quartier Yopougon</li>
-                            <li>Accès par Avenue Marcory</li>
-                            <li>⏱️ Durée estimée : 25-35 minutes</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="itinerary-note">
-                    <p><strong>⚠️ Important :</strong> Certaines voies sont barrées le jour de l'indépendance (défilés et festivités). Vérifiez les accès le jour du mariage ou arrivez plus tôt.</p>
-                </div>
-
                 <div class="map-container">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.6832465282347!2d-4.0328!3d5.3483!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc1ec95db3b5555%3A0x1234567890ab!2sMenara%20Garden%20Yopougon!5e0!3m2!1sfr!2sci!4v1234567890"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.8844168193814!2d-4.009892!3d5.338956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc1eda4c89d0f0b1%3A0x8c3e3e8e8e8e8e8e!2sMenara%20Garden%20Yopougon!5e0!3m2!1sfr!2sci!4v1722789654321"
                         width="100%" 
-                        height="300" 
-                        style="border:0;" 
+                        height="280" 
+                        style="border:0;border-radius:12px;" 
                         allowfullscreen="" 
                         loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade"
@@ -224,9 +191,13 @@
                     ></iframe>
                 </div>
 
-                <a href="https://maps.google.com/?q=Menara+Garden+Yopougon" target="_blank" class="btn-maps">
-                    📱 Ouvrir dans Google Maps
+                <a href="https://maps.app.goo.gl/PRT33PHSLhgVpBhR9" target="_blank" class="btn-maps">
+                    📱 Directions
                 </a>
+
+                <div class="itinerary-note">
+                    <p><strong>⚠️ Important :</strong> Vérifiez les accès le jour du mariage - certaines voies peuvent être fermées pour l'indépendance.</p>
+                </div>
             </div>
         </div>
     </div>
