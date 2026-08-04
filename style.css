@@ -1,0 +1,195 @@
+/* style.css - consolidated, mobile-first, Tropical Sunset theme (enhanced universe visuals) */
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+:root{
+  --ivory: #fff8ef;
+  --sand: #f6dfc7;
+  --peach: #f3b996;
+  --coral: #ff7043;
+  --sunset: #ff8a65;
+  --gold: #e6b24a; /* softer gold */
+  --teal: #3fb6a8;
+  --leaf: #6aa88a;
+  --brown: #4a2f21;
+  --white: #ffffff;
+  --ui-radius: 14px;
+  --glass-alpha: 0.92;
+}
+
+/* reset */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Montserrat',sans-serif;
+  background:linear-gradient(180deg,var(--ivory),#fff2e5);
+  color:var(--brown);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* HERO (homepage) - keep content identical but improve legibility */
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(rgba(0,0,0,.28), rgba(0,0,0,.16)), url("Couple1.jpg");
+  background-size:cover;
+  background-position:center;
+}
+.hero .overlay{ position:absolute; inset:0; pointer-events:none; }
+.hero-content{ position:relative; z-index:2; text-align:center; color:#fff; padding:28px; max-width:980px; }
+.photos-couple{ display:flex; justify-content:center; gap:14px; margin-bottom:18px; }
+.photos-couple img{
+  width:116px; height:146px; object-fit:cover; border-radius:var(--ui-radius); border:3px solid rgba(255,255,255,.96);
+  box-shadow:0 20px 48px rgba(0,0,0,.32); transition:transform .36s ease, box-shadow .36s;
+}
+.photos-couple img:hover{ transform:translateY(-6px) scale(1.02); box-shadow:0 30px 68px rgba(0,0,0,.36); }
+
+.small-title{ letter-spacing:3px; text-transform:uppercase; font-size:12px; margin-bottom:8px; opacity:.95; }
+h1{ font-family:'Cormorant Garamond',serif; font-size:64px; line-height:.92; margin:10px 0 8px; font-weight:600; text-shadow:0 10px 28px rgba(0,0,0,.32); }
+h1 span{ font-size:40px; color:var(--peach) }
+.date, .location{ font-size:16px; margin:6px 0; color:rgba(255,255,255,.95) }
+.theme{ font-family:'Cormorant Garamond'; font-size:16px; color:rgba(255,230,210,.95); font-style:italic; margin-top:6px; }
+
+button{
+  margin-top:18px; padding:12px 40px; border-radius:40px; border:none;
+  background:linear-gradient(135deg, #ffcf6b, var(--sunset)); color:white; font-weight:700; cursor:pointer;
+  box-shadow:0 18px 46px rgba(0,0,0,.22); transition:transform .28s, box-shadow .28s;
+}
+button:hover{ transform:translateY(-6px); box-shadow:0 28px 64px rgba(0,0,0,.28) }
+button:focus{ outline:3px solid rgba(255,140,100,.18); outline-offset:3px }
+
+/* homepage verse (kept, discreet) */
+.homepage-verse{ margin:18px auto; max-width:720px; text-align:center; color:rgba(255,255,255,.94); font-family:'Cormorant Garamond'; padding:12px 16px; }
+
+/* main layout */
+main{ padding:18px 16px; max-width:1120px; margin:0 auto }
+
+/* app cards (default) */
+.menu-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-top:18px; align-items:start }
+.app-card{
+  position:relative; overflow:visible; padding:20px; border-radius:18px; cursor:pointer;
+  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,249,243,.96));
+  box-shadow:0 18px 40px rgba(30,20,15,.06); transition:transform .32s ease, box-shadow .32s, box-shadow .32s;
+  transform-origin:center;
+}
+.app-card:hover{ transform:translateY(-8px) scale(1.01); box-shadow:0 34px 72px rgba(30,20,15,.12) }
+.app-card .icon{ font-size:34px; position:absolute; right:18px; top:18px; opacity:.95 }
+/* icon as gentle pill */
+.app-card .icon-pill{ position:absolute; right:14px; top:14px; width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,250,245,.96)); box-shadow:inset 0 -6px 12px rgba(255,200,140,.06); font-size:22px; color:var(--coral); }
+.app-card h3{ font-family:'Cormorant Garamond'; font-size:20px; margin:6px 0 4px 0; color:var(--brown) }
+.app-card p{ font-size:14px; color:#6a4f44; margin-bottom:8px }
+
+/* small decorative flourish under title (gold separator) */
+.app-card .sep{ height:6px; width:48px; border-radius:4px; background: linear-gradient(90deg, rgba(230,178,74,0.95), rgba(255,140,100,0.9)); margin:10px 0 14px 0 }
+
+/* content sections */
+.content-section.card{ background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,250,245,.96)); border-radius:18px; padding:18px; box-shadow:0 14px 34px rgba(30,20,15,.06) }
+.hidden-section{ display:none }
+
+/* GUEST RESULT and choices */
+.guest-result{ margin-top:18px; padding:18px; border-radius:14px; background:linear-gradient(145deg,#fff8ef,#fff); text-align:center; box-shadow:0 12px 28px rgba(0,0,0,.06) }
+.choice{ display:block; width:100%; margin:10px 0; background:linear-gradient(135deg,var(--sunset),var(--coral)); color:white; padding:12px 16px; border-radius:12px; border:none }
+
+/* ========== Universe-only styles (activated when #universe has class .universe) ========== */
+#universe.universe{
+  position:relative; overflow:visible; padding:28px 18px 60px; min-height:60vh;
+  /* layered background: warm overlay + photo */
+  background: linear-gradient(180deg, rgba(255,242,235,0.22), rgba(255,235,225,0.12)), url("Couple1.jpg");
+  background-size:cover; background-position:center right;
+}
+
+/* subtle sun glow (non-intrusive) */
+#universe.universe::before{
+  content:""; position:absolute; right:-120px; top:-80px; width:520px; height:520px; z-index:0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,200,130,0.18), rgba(255,140,100,0.04) 40%, transparent 60%);
+  filter:blur(28px); pointer-events:none; animation:sunDrift 12s ease-in-out infinite;
+}
+@keyframes sunDrift{ 0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)} }
+
+/* decorative floral motifs using decorative-pattern.svg placed subtly in corners */
+#universe.universe::after{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background-image: url('decorative-pattern.svg'), url('decorative-pattern.svg');
+  background-repeat:no-repeat, no-repeat;
+  background-position: left 10px top 10px, right 10px bottom 10px;
+  background-size:140px 140px, 180px 180px;
+  opacity:.12; mix-blend-mode:soft-light; filter:grayscale(.06) saturate(.9) blur(0.2px);
+}
+
+/* warm glass cards inside universe */
+#universe.universe .card,
+#universe.universe .app-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,250,245,0.92));
+  backdrop-filter: blur(8px) saturate(1.02);
+  border-radius:16px;
+  box-shadow:0 22px 64px rgba(60,34,20,.08);
+  border:1px solid rgba(255,200,150,.08);
+  position:relative; z-index:3;
+}
+
+/* accent bar for cards (left) with small leaf tip */
+#universe.universe .app-card::before{
+  content:""; position:absolute; left:0; top:10px; bottom:10px; width:10px; border-top-left-radius:12px; border-bottom-left-radius:12px;
+  background: linear-gradient(180deg, rgba(255,140,100,0.98), rgba(255,120,80,0.98));
+  box-shadow: inset 0 -6px 12px rgba(255,200,140,.04);
+  z-index:4;
+}
+#universe.universe .app-card::after{
+  content:""; position:absolute; right:12px; bottom:12px; width:72px; height:48px; background-image: url('decorative-pattern.svg'); background-repeat:no-repeat; background-size:contain; opacity:.08; transform:rotate(12deg); z-index:2; pointer-events:none;
+}
+
+/* icon pill refinement inside universe */
+#universe.universe .app-card .icon-pill{ right:14px; top:14px; }
+
+/* buttons inside universe */
+#universe.universe button,
+#universe.universe .choice,
+#universe.universe .map-button{
+  background: linear-gradient(135deg, rgba(255,140,100,0.98), rgba(255,110,80,0.96));
+  color:#fff; border:none; box-shadow:0 18px 44px rgba(255,96,60,.12);
+  transition: transform .22s ease, box-shadow .22s;
+  border-radius:12px; padding:12px 18px;
+}
+#universe.universe button:hover{ transform: translateY(-6px); box-shadow:0 30px 60px rgba(255,96,60,.16) }
+#universe.universe button:focus{ outline:3px solid rgba(255,200,140,.14); outline-offset:3px }
+
+/* decorative separators between sections (delicate floral divider) */
+.section-divider{ width:100%; height:18px; background-image: url('decorative-pattern.svg'); background-repeat:repeat-x; background-size:20px 18px; opacity:.06; margin:18px 0 }
+
+/* staggered card appearance */
+#universe.universe .app-card{ animation:cardFloat .8s cubic-bezier(.2,.9,.2,1) both; }
+#universe.universe .app-card:nth-child(1){ animation-delay:.06s }
+#universe.universe .app-card:nth-child(2){ animation-delay:.12s }
+#universe.universe .app-card:nth-child(3){ animation-delay:.18s }
+#universe.universe .app-card:nth-child(4){ animation-delay:.24s }
+@keyframes cardFloat{ from{ opacity:0; transform:translateY(18px) scale(.995) } to{ opacity:1; transform:translateY(0) scale(1) } }
+
+/* reduce motion preference */
+@media (prefers-reduced-motion: reduce){
+  #universe.universe::before, #universe.universe::after, .app-card{ animation:none !important; transition:none !important; }
+}
+
+/* responsive */
+@media (max-width:700px){
+  h1{ font-size:36px }
+  .photos-couple img{ width:78px; height:96px }
+  .menu-grid{ grid-template-columns:1fr; gap:12px }
+  button{ padding:10px 26px }
+  #universe.universe::before{ display:none } /* hide sun glow on small screens */
+  #universe.universe::after{ background-size:120px 120px, 140px 140px }
+  .app-card{ padding:16px; border-radius:14px }
+}
+
+/* small helpers */
+.hidden{ display:none }
+.fade-out{ animation:heroFadeOut .36s ease forwards }
+@keyframes heroFadeOut{ to{ opacity:0; transform:translateY(-10px); visibility:hidden } }
+.fade-in{ animation:universeFadeIn .44s ease both; opacity:0 }
+@keyframes universeFadeIn{ from{ opacity:0; transform:translateY(12px) } to{ opacity:1; transform:translateY(0) } }
+
