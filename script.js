@@ -1,4 +1,4 @@
-/* script.js - improved UX, completed templates and robust event handling */
+/* script.js - improved UX, completed templates, seat selection (local fallback) and robust event handling */
 
 let guests = [];
 
@@ -68,7 +68,7 @@ function normalize(text){
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'')
-    .replace(/[’']/g,' ')
+    .replace(/[’'`]/g,' ')
     .replace(/-/g,' ')
     .replace(/\s+/g,' ')
     .trim();
@@ -100,8 +100,28 @@ function tableColorForName(name){
   return '#fff';
 }
 
+// Storage helpers for seat reservations (local fallback)
+const STORAGE_KEY = 'yaud_seat_reservations_v1';
+
+function readReservations(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  }catch(e){ return {}; }
+}
+
+function writeReservations(obj){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }catch(e){ console.warn('Could not write reservations', e); }
+}
+
 // Render helpers
-function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'":"'"'}[c])); }
+function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Extract table number from string like "Table 7 - Fuchsia" or "Table 12"
+function extractTableNumber(tableLabel){
+  if(!tableLabel) return null;
+  const m = tableLabel.match(/(\d{1,3})/);
+  return m ? Number(m[1]) : null;
+}
 
 // Search logic (robust)
 function searchTable(){
@@ -125,8 +145,10 @@ function searchTable(){
   const matches = guests.filter(person => {
     const prenom = normalize(person.prenom || '');
     const nom = normalize(person.nom || '');
-    const full = normalize((person.prenom || '') + ' ' + (person.nom || ''));
-    const rev = normalize((person.nom || '') + ' ' + (person.prenom || ''));
+    const full = normalize(((person.prenom||'') + ' ' + (person.nom||'')).trim());
+    const rev = normalize(((person.nom||'') + ' ' + (person.prenom||'')).trim());
+
+    // fuzzy-ish comparisons: includes and small typos tolerated by remove vowels? keep simple for now
     return full.includes(search) || rev.includes(search) || prenom.includes(search) || nom.includes(search);
   });
 
@@ -136,7 +158,6 @@ function searchTable(){
   }
 
   if(matches.length > 1){
-    // store current matches for selection
     window.currentMatches = matches;
     resultBox.innerHTML = `<p>Plusieurs invités correspondent. Veuillez sélectionner votre nom :</p>` +
       matches.map((p, i) => {
@@ -157,6 +178,66 @@ function showGuest(index){
   showGuestResult(person);
 }
 
+// Render seat map (8 seats) and handle selection
+function renderSeatMap(container, tableNumber, currentGuestName){
+  const seatsCount = 8; // as specified
+  const reservations = readReservations();
+  const tableKey = `table_${tableNumber}`;
+  const tableRes = reservations[tableKey] || {};
+
+  // build seat buttons
+  let html = '<div class="seat-map" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">';
+  for(let i=1;i<=seatsCount;i++){
+    const occ = tableRes[i] || null; // occupant name
+    const isMine = occ && normalize(occ) === normalize(currentGuestName);
+    const label = `Place ${i}`;
+    if(occ){
+      html += `<button class="seat" data-seat="${i}" aria-label="${label} - occupée par ${escapeHtml(occ)}" disabled>${i} • ${escapeHtml(occ)}</button>`;
+    }else{
+      html += `<button class="seat available" data-seat="${i}" aria-label="${label} - libre">${i}</button>`;
+    }
+  }
+  html += '</div>';
+
+  // list of already reserved on this table (excluding current guest unless they reserved)
+  const reservedList = Object.keys(tableRes).map(k => ({seat: k, name: tableRes[k]})).filter(r => normalize(r.name)!==normalize(currentGuestName));
+  if(reservedList.length){
+    html += '<div style="margin-top:8px"><strong>Places déjà réservées sur cette table :</strong><ul style="margin:6px 0;padding-left:18px">' + reservedList.map(r=>`<li>Place ${escapeHtml(r.seat)} — ${escapeHtml(r.name)}</li>`).join('') + '</ul></div>';
+  }
+
+  container.insertAdjacentHTML('beforeend', html);
+
+  // attach handlers for available seats
+  container.querySelectorAll('.seat.available').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const seatIndex = btn.getAttribute('data-seat');
+      if(!seatIndex) return;
+      // confirm
+      if(!confirm(`Confirmer la réservation de la place ${seatIndex} pour ${currentGuestName} ?`)) return;
+      // write to storage
+      const resObj = readReservations();
+      resObj[tableKey] = resObj[tableKey] || {};
+      // prevent double booking if seat occupied (race condition improbable in localStorage)
+      if(resObj[tableKey][seatIndex]){ alert('Désolé, cette place a été prise entre-temps.'); return; }
+      resObj[tableKey][seatIndex] = currentGuestName;
+      writeReservations(resObj);
+      // refresh view
+      container.innerHTML = container.innerHTML; // quick reset
+      // re-render: remove current content and call showGuestResult again to regenerate
+      // find parent guest result wrapper
+      const parent = container.closest('.guest-result');
+      if(parent){
+        const nameEl = parent.querySelector('h3');
+        const name = nameEl ? nameEl.textContent.replace(/^Bonjour\s+/,'').trim() : currentGuestName;
+        // find the original person by name
+        const person = guests.find(p => normalize(((p.prenom||'')+' '+(p.nom||'')).trim()) === normalize(name));
+        if(person) showGuestResult(person);
+        else parent.querySelector('#result')?.innerHTML = '';
+      }
+    });
+  });
+}
+
 function showGuestResult(person){
   const resultBox = document.getElementById('result');
   if(!resultBox || !person) return;
@@ -164,8 +245,24 @@ function showGuestResult(person){
   const name = `${person.prenom || ''} ${person.nom || ''}`.trim();
   const table = person.table || '—';
   const color = tableColorForName(table);
+  const tableNumber = extractTableNumber(table);
 
-  resultBox.innerHTML = `\n    <div class="guest-result" role="status">\n      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">\n        <div style="width:12px;height:12px;border-radius:4px;background:${color};border:1px solid rgba(0,0,0,0.06)"></div>\n        <h3>Bonjour ${escapeHtml(name)} ✨</h3>\n      </div>\n      <p>Votre table : <strong>${escapeHtml(table)}</strong></p>\n      <p>Nous sommes ravis de vous accueillir. Retrouvez les autres sections pour le menu, les informations et l\'itinéraire.</p>\n    </div>`;
+  resultBox.innerHTML = `\n    <div class="guest-result" role="status">\n      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">\n        <div style="width:12px;height:12px;border-radius:4px;background:${color};border:1px solid rgba(0,0,0,0.06)"></div>\n        <h3>Bonjour ${escapeHtml(person.prenom || '')} ✨</h3>\n      </div>\n      <p>Nous sommes ravis de vous accueillir pour cette belle journée.</p>\n      <p>Votre table : <strong>${escapeHtml(table)}</strong></p>\n    </div>`;
+
+  // seat selection UI (local fallback)
+  const wrapper = resultBox.querySelector('.guest-result');
+  if(tableNumber){
+    const seatContainer = document.createElement('div');
+    seatContainer.style.marginTop = '10px';
+    seatContainer.innerHTML = `<p><strong>Choisissez votre place (8 places par table)</strong></p>`;
+    wrapper.appendChild(seatContainer);
+
+    renderSeatMap(seatContainer, tableNumber, name);
+  } else {
+    const note = document.createElement('p');
+    note.textContent = 'Numéro de table non disponible.';
+    wrapper.appendChild(note);
+  }
 
   // ensure screen readers announce the new content
   resultBox.setAttribute('aria-live','polite');
